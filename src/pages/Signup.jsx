@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input, Button } from '../components'
 import authService from '../auth/auth'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { login } from '../store/authSlice'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Signup(props) {
 
     const dispatch = useDispatch()
+    const status = useSelector((state) => state.auth.status)
     const navigate = useNavigate()
 
     // react hook from
@@ -32,6 +33,12 @@ function Signup(props) {
         navigate('/')
     }
 
+    // if (status) return (
+    //     <div className='w-full flex flex-col justify-center items-center my-12'>
+    //         <div className='text-blue-500 font-semibold text-2xl'>You are already Logged in!</div>
+    //         <Link to={'/'} className='text-blue-500 hover:text-emerald-200 cursor-pointer'>Go back</Link>
+    //     </div>
+    // )
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

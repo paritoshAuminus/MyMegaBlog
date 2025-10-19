@@ -9,15 +9,8 @@ import { Signup, Home } from './pages/index.js'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
     <Provider store={store}>
-      <Header />
       <App />
-      <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/signup' element={<Signup />}/>
-      </Routes>
     </Provider>
-    </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )
