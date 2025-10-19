@@ -6,13 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function Header() {
 
-    const [login, setLogin] = useState(false)
-    const status = useSelector(auth.state.status)
-    const dispatch = useDispatch()  
-
-    useEffect(() => {
-        setLogin(authService.getUser())
-    }, [status])
+    // useEffect(() => {
+    //     setLogin(authService.getUser())
+    // }, [])
 
 
     const links = [
@@ -44,7 +40,8 @@ function Header() {
                 </nav>
 
                 {/* Show login / signup based of the user logged in or not */}
-                {login ? <Link to={'/login'} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Login</Link> : <Link onClick={() => authService.logout()} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Logout</Link>}
+                {/* {login ? <Link to={'/login'} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Login</Link>
+                    : <Link onClick={() => authService.logout()} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Logout</Link>} */}
             </div>
         </header>
     )

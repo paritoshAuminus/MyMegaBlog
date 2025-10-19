@@ -1,9 +1,15 @@
+import { useDispatch } from "react-redux";
 import BASE_URL from "../api/api";
 import { login as storeLogin, logout as storeLogout } from "../store/authSlice";
 
+
+// ---------------------------------------------------
+// AUTHENTICATION SERVICES
+// ---------------------------------------------------
+
 class AuthService {
 
-    // signup
+    // signup & login
     async signup({ name, email, password }) {
         try {
             const response = await fetch(`${BASE_URL}/auth/register`, {
@@ -13,10 +19,9 @@ class AuthService {
                     'Content-Type': 'application/json'
                 }
             })
-            
+
             if (response.ok) {
                 const response = await this.login({ email, password })
-                console.log(response)
                 return response
             } else {
                 console.log(`authService response:: signup :: ${response.status} :: ${response.statusText}`)
@@ -42,9 +47,10 @@ class AuthService {
 
             if (response.ok) {
                 localStorage.setItem('megaNotesAccessToken', result.token)
-                storeLogin(result.user)
+            } else {
+                throw new Error('Failed to login')
             }
-
+            console.log(result.user)
             return result
 
         } catch (error) {
@@ -54,22 +60,40 @@ class AuthService {
     }
 
     // get currently logged in user
-    getUser() {
-        // check if the access token is present
-        if (localStorage.getItem('megaNotesAccessToken')) {
-            return true
+    async getUser() {
+        const token = localStorage.getItem('megaNotesAccessToken');
+        if (!token) return false;
+
+        try {
+            const response = await fetch(`${BASE_URL}/auth/getUser`, {
+                method: 'GET', // GET is enough
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // <-- send token in header
+                }
+            });
+
+            if (!response.ok) return false;
+
+            const result = await response.json();
+            console.log(result.user);
+            return result.user; // or true if you just want a boolean
+        } catch (error) {
+            console.error('authService error :: getUser ::', error);
+            return false;
         }
     }
+
 
     // logout
     logout() {
         localStorage.removeItem('megaNotesAccessToken')
-        storeLogout()
     }
 }
 
-console.log(localStorage.getItem('megaNotesAccessToken'))
-
+console.log(`megaNotesAccessToken :: ${localStorage.getItem('megaNotesAccessToken')}`)
 const authService = new AuthService()
+authService.logout()
+// authService.getUser()
 
 export default authService;
