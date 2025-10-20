@@ -11,36 +11,33 @@ class Services {
         try {
             const response = await fetch(`${BASE_URL}/notes`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': localStorage.getItem('megaNotesAccessToken')
+                },
                 body: JSON.stringify({
                     title: title,
                     content: content
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-user-id': localStorage.getItem('megaNotesAccessToken'),
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                }
+                })
             })
             const result = await response.json()
             if (response.ok) {
-                console.log("✅ Note created:", result);
-                console.log("Status:", response.status);
+                return { response, result }
+            } else if (response.status === 401) {
+                console.log('services error :: created note :: Invalid user', response.status)
             } else {
-                console.warn("❌ createNote :: failed to create note", result);
+                console.log("createNote :: failed to create note", result);
             }
         } catch (error) {
             console.log('services error :: createNote ::', error)
         }
     }
 
+    // getNotes
+    async getNotes() { }
+
 }
 
 const services = new Services()
-
-const response = services.createNote({
-    title: 'New Title',
-    content: 'this is the content'
-})
 
 export default services;
