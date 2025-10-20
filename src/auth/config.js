@@ -34,7 +34,7 @@ class Services {
     }
 
     // getNotes
-    async getNotes() { }
+    async getNotes() {}
 
 }
 
