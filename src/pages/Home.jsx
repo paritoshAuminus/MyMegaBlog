@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import authService from '../auth/auth'
+import { Link } from 'react-router-dom'
 
 function Home() {
 
+  const status = useSelector((state) => state.auth.status)
+
+  if (!status) return (
+    <div className='w-full flex flex-col justify-center items-center my-24'>
+      <div className='text-blue-500 font-semibold text-2xl'>Please signup to continue</div>
+    </div>
+  )
+
   return (
-    // <div>{access ? 'Home :: I am currently logged in' : 'Home :: I am currently logged out'}</div>
-    <div>Home :: I am currently Null</div>
+    <div>
+
+    </div>
   )
 }
 

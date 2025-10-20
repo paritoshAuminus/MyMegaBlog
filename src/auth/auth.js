@@ -48,9 +48,10 @@ class AuthService {
             if (response.ok) {
                 localStorage.setItem('megaNotesAccessToken', result.token)
             } else {
-                throw new Error(`Failed to login :: ${response.ok}`)
+                console.log('login :: failed to login')
+                return {response}
             }
-            return result
+            return {response, result}
 
         } catch (error) {
             console.log('authService error :: login ::', error)
@@ -73,9 +74,7 @@ class AuthService {
             });
 
             if (!response.ok) return false;
-            const result = await response.json()
-            console.log(result)
-            return result
+            return response
 
         } catch (error) {
             console.error('authService error :: getUser ::', error);
@@ -92,6 +91,6 @@ class AuthService {
 
 const authService = new AuthService()
 // authService.logout()
-console.log(localStorage.getItem('megaNotesAccessToken'))
+console.log('token ::',localStorage.getItem('megaNotesAccessToken'))
 
 export default authService;

@@ -1,5 +1,4 @@
 import React from 'react'
-import { CiUser } from 'react-icons/ci';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom'
 import authService from '../../auth/auth'
@@ -23,9 +22,9 @@ function Header() {
     return (
         <header className="body-font bg-sky-500 text-md md:text-lg">
             <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
-                <h1 className='text-white'>Logo</h1>
+                <Link to={'/'} className='text-white'>Logo</Link>
                 <nav>
-                    {links.map(({ to, label }) => (
+                    {status && links.map(({ to, label }) => (
                         <NavLink
                             key={to}
                             to={to}
