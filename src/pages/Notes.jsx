@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import services from '../auth/config'
 import { AddNote, NotesCard } from '../components'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import NoteDetails from '../components/NoteDetails'
 
 function Notes() {
 
@@ -10,13 +11,14 @@ function Notes() {
     const status = useSelector((state) => state.auth.status)
     const navigate = useNavigate()
 
-    const [edit, setEdit] = useState(false)
+    const [create, setCreate] = useState(false)
+
 
     useEffect(() => {
         const fetchNotes = async () => {
             const { response, result } = await services.getNotes()
             if (response.ok) {
-                setNoteList(result)     // [{...}, {...}, {...}]
+                setNoteList(result)
             } else {
                 console.log('failed to fetch notes ::', response.status)
             }
@@ -24,23 +26,26 @@ function Notes() {
         fetchNotes()
     }, [])
 
+
     return (
         <>
             <div className='w-full flex justify-between px-15 py-2'>
                 <span className='text-lg md:text-xl'>{noteList.length} notes stored</span>
-                <button onClick={() => setEdit(!edit)} className='px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer'>{edit? 'Cancel' : '+ Add Note'}</button>
+                <button onClick={() => setCreate(!create)} className='px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer'>{create ? 'Cancel' : '+ Add Note'}</button>
             </div>
-            {edit && <AddNote />}
-            {noteList.length < 1 ?
-                <div>
-                    <ul className='grid grid-cols-3'>
+            {create && <AddNote />}
+            {/* <NoteDetails /> */}
+            {noteList.length > 0 ?
+                <div className='px-10'>
+                    <ul className='grid-cols-3 gap-3'>
                         {noteList.map((item) => (
-                            <li>
-                                <NotesCard
-                                    key={item.id}
-                                    title={item.title}
-                                    content={item.content}
-                                />
+                            <li key={item.id}>
+                                <Link to={`/noteDetails/${item.id}`}>
+                                    <NotesCard
+                                        title={item.title}
+                                        content={item.content}
+                                    />
+                                </Link>
                             </li>
                         ))}
                     </ul>

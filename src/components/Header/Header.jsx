@@ -15,7 +15,7 @@ function Header() {
     }
 
     const links = [
-        { to: '/mynotes', label: 'My Notes' },
+        { to: '/notes', label: 'My Notes' },
         { to: '/myaccount', label: 'My Account' }
     ];
 

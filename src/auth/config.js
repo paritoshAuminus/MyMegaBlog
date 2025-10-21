@@ -6,7 +6,9 @@ import BASE_URL from "../api/api"
 
 class Services {
 
-    // create note
+    // ----------------------------------
+    // CREATE NEW NOTE
+    // ----------------------------------
     async createNote({ title, content }) {
         try {
             const response = await fetch(`${BASE_URL}/notes`, {
@@ -33,7 +35,9 @@ class Services {
         }
     }
 
-    // getNotes
+    // --------------------------------------------------------------
+    // FETCH ALL NOTES :: getNotes :: fetch a list of notes (objects)
+    // --------------------------------------------------------------
     async getNotes() {
         try {
             const response = await fetch(`${BASE_URL}/notes`, {
@@ -54,6 +58,56 @@ class Services {
         }
     }
 
+    //-----------------------------------------------------
+    // FETCH ONE NOTE :: getNote :: fetch one note (object)
+    //-----------------------------------------------------
+    async getNote({ id }) {
+        try {
+            const response = await fetch(`${BASE_URL}/notes/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                }
+            })
+            const result = await response.json()
+            console.log(result)
+            if (response.ok) {
+                return { response, result }
+            } else {
+                console.log('getNote :: failed to fetch note ::', response.message)
+            }
+        } catch (error) {
+            console.log('services error :: getNote ::', error)
+        }
+    }
+
+    //--------------
+    // UPDATE NOTE
+    //--------------
+    async updateNote({ id, note }) {      // note: { title, content }
+        try {
+            const response = await fetch(`${BASE_URL}/notes/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                },
+                body: JSON.stringify({ note: note })
+            })
+
+            const result = await response.json()
+            console.log('response', response.ok)
+
+            if (response.ok) {
+                return { response, result }
+            } else {
+                console.log('updateNote :: failed to update note', response.message)
+            }
+        } catch (error) {
+            console.log('services error :: updateNote ::', error)
+        }
+    }
 }
 
 const services = new Services()

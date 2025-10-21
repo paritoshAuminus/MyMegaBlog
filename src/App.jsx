@@ -6,6 +6,7 @@ import { Header } from './components'
 import { Home, Login, Signup, Notes } from './pages'
 import { useDispatch, useSelector } from 'react-redux'
 import { login as storeLogin, logout as storeLogout } from './store/authSlice'
+import NoteDetails from './components/NoteDetails'
 
 function App() {
   const status = useSelector((state) => state.auth.status)
@@ -34,9 +35,10 @@ function App() {
         <Header />
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/mynotes' element={<Notes />}/>
+          <Route path='/notes' element={<Notes />}/>
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/noteDetails/:id' element={<NoteDetails />} />
         </Routes>
       </BrowserRouter>
     </>
