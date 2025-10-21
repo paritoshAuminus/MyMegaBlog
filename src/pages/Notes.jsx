@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import services from '../auth/config'
-import { NotesCard } from '../components'
+import { AddNote, NotesCard } from '../components'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function Notes() {
 
     const [noteList, setNoteList] = useState([])
     const status = useSelector((state) => state.auth.status)
+    const navigate = useNavigate()
+
+    const [edit, setEdit] = useState(false)
 
     useEffect(() => {
         const fetchNotes = async () => {
@@ -20,14 +24,13 @@ function Notes() {
         fetchNotes()
     }, [])
 
-    if (!status) navigate('/login')
-
     return (
         <>
             <div className='w-full flex justify-between px-15 py-2'>
                 <span className='text-lg md:text-xl'>{noteList.length} notes stored</span>
-                <button className='px-3 py-2 bg-blue-500 text-white rounded-lg cursor-pointer'>+ Add Note</button>
+                <button onClick={() => setEdit(!edit)} className='px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer'>{edit? 'Cancel' : '+ Add Note'}</button>
             </div>
+            {edit && <AddNote />}
             {noteList.length < 1 ?
                 <div>
                     <ul className='grid grid-cols-3'>

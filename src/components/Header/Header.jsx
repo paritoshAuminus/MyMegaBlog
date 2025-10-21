@@ -1,17 +1,17 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom'
 import authService from '../../auth/auth'
+import { useDispatch, useSelector } from 'react-redux'
 import { logout as storeLogout } from '../../store/authSlice'
 
 function Header() {
 
-    const status = useSelector((state) => state.auth.status)
     const dispatch = useDispatch()
+    const status = useSelector(state => state.auth.status)
 
     const handleLogout = () => {
         authService.logout()
-        storeLogout(dispatch(storeLogout()))
+        dispatch(storeLogout())
     }
 
     const links = [
@@ -28,19 +28,13 @@ function Header() {
                         <NavLink
                             key={to}
                             to={to}
-                            className={({ isActive }) =>
-                                `mr-5 ${isActive
-                                    ? 'text-emerald-200 hover:text-emerald-300'
-                                    : 'text-white hover:text-blue-200'
-                                }`
-                            }
+                            className={({ isActive }) => `mr-5 nav-item ${isActive ? 'active' : ''}`}
                         >
-                            {label}
+                            <span className="nav-label">{label}</span>
                         </NavLink>
                     ))}
                 </nav>
 
-                {/* Show login / signup based of the user logged in or not */}
                 <div>
                     {status ?
                         <button onClick={handleLogout} className='bg-gray-100 hover:bg-white text-blue-500 hover:text-blue-600 text-lg rounded-md px-3 py-2 cursor-pointer'>

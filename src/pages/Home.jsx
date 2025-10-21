@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import authService from '../auth/auth'
 import { Link } from 'react-router-dom'
 import { Notes } from '../pages'
+import { AddNote } from '../components'
 
 function Home() {
 
@@ -16,6 +17,7 @@ function Home() {
 
   return (
     <div>
+      <AddNote />
     </div>
   )
 }
