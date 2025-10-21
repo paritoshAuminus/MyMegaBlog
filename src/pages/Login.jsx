@@ -26,9 +26,12 @@ function Login() {
         })
         if (response.response.ok) {
             dispatch(storeLogin(response.result.user))
+            console.log('login reponse ::', response.result.user)
             navigate('/')
         } else if (response.response.status === 404 || !response.response.ok) {
             setError('User not found')
+        } else {
+            throw new Error(result.message || `Login failed ${response.status}`)
         }
     }
 

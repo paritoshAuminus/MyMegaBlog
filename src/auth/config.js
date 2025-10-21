@@ -34,7 +34,25 @@ class Services {
     }
 
     // getNotes
-    async getNotes() {}
+    async getNotes() {
+        try {
+            const response = await fetch(`${BASE_URL}/notes`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                }
+            })
+            const result = await response.json()
+            if (response.ok) {
+                return { response, result }
+            } else {
+                console.log('getNotes :: failed to fetch notes', response.status)
+            }
+        } catch (error) {
+            console.log('services error :: getNotes ::', error)
+        }
+    }
 
 }
 

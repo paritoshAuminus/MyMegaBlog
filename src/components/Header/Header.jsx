@@ -15,8 +15,8 @@ function Header() {
     }
 
     const links = [
-        { to: '/myBlogs', label: 'My Blogs' },
-        { to: '/myAccount', label: 'My Account' }
+        { to: '/mynotes', label: 'My Notes' },
+        { to: '/myaccount', label: 'My Account' }
     ];
 
     return (
@@ -41,8 +41,6 @@ function Header() {
                 </nav>
 
                 {/* Show login / signup based of the user logged in or not */}
-                {/* {login ? <Link to={'/login'} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Login</Link>
-                    : <Link onClick={() => authService.logout()} className='px-4 py-2 rounded-lg bg-white text-blue-500'>Logout</Link>} */}
                 <div>
                     {status ?
                         <button onClick={handleLogout} className='bg-gray-100 hover:bg-white text-blue-500 hover:text-blue-600 text-lg rounded-md px-3 py-2 cursor-pointer'>

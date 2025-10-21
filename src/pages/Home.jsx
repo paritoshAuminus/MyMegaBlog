@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import authService from '../auth/auth'
 import { Link } from 'react-router-dom'
-import ProductCard from '../components/ProductCard'
+import { Notes } from '../pages'
 
 function Home() {
 
@@ -16,7 +16,6 @@ function Home() {
 
   return (
     <div>
-      <ProductCard />
     </div>
   )
 }

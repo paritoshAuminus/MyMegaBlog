@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import BASE_URL from "../api/api";
 import { login as storeLogin, logout as storeLogout } from "../store/authSlice";
 
