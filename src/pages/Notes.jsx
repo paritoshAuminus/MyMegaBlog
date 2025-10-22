@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import services from '../auth/config'
 import { AddNote, NotesCard } from '../components'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Notes() {
 
     const [noteList, setNoteList] = useState([])
     const [create, setCreate] = useState(false)
+    const status = useSelector((state) => state.auth.status)
 
     const handleCreate = async ({ title, content }) => {
         const { response, result } = await services.createNote({ title, content })
-        if (!response.ok) {
+        if (response.ok) {
             setCreate(false)
         } else {
             setCreate(false)
@@ -28,9 +30,14 @@ function Notes() {
             }
         }
         fetchNotes()
-    }, [handleCreate])
+    }, [handleCreate, status])
 
 
+    if (!status) return (
+        <div className='w-full flex flex-col justify-center items-center my-24'>
+            <div className='text-blue-500 font-semibold text-2xl'>Please signup to continue</div>
+        </div>
+    )
 
     return (
         <>
@@ -53,9 +60,11 @@ function Notes() {
                     <ul className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
                         {noteList.map((item) => (
                             <li key={item.id}>
-                                <Link to={`/noteDetails/${item.id}`}>
-                                    <NotesCard title={item.title} content={item.content} />
-                                </Link>
+                                <NotesCard
+                                    to={`/noteDetails/${item.id}`}
+                                    title={item.title}
+                                    content={item.content}
+                                />
                             </li>
                         ))}
                     </ul>

@@ -89,7 +89,5 @@ class AuthService {
 }
 
 const authService = new AuthService()
-// authService.logout()
-console.log('token ::',localStorage.getItem('megaNotesAccessToken'))
 
 export default authService;

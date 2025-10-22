@@ -20,7 +20,7 @@ function Header() {
     ];
 
     return (
-        <header className="body-font bg-sky-500 text-md md:text-lg">
+        <header className="body-font bg-blue-500 text-md md:text-lg">
             <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
                 <Link to={'/'} className='text-white'>Logo</Link>
                 <nav>

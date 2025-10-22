@@ -99,7 +99,6 @@ class Services {
             })
 
             const result = await response.json()
-            console.log('response', response.ok)
 
             if (response.ok) {
                 return { response, result }
@@ -108,6 +107,25 @@ class Services {
             }
         } catch (error) {
             console.log('services error :: updateNote ::', error)
+        }
+    }
+
+    async deleteNote({ id }) {
+        try {
+            const response = await fetch(`${BASE_URL}/notes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                }
+            })
+            if (response.status === 204) { // successful
+                return true
+            } else if (response.status === 404) {
+                console.log('deleteNote :: Note not found', response.status)
+            }
+        } catch (error) {
+            console.log('services error :: deleteNote :: ', error)
         }
     }
 }
