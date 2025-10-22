@@ -71,7 +71,6 @@ class Services {
                 }
             })
             const result = await response.json()
-            console.log(result)
             if (response.ok) {
                 return { response, result }
             } else {
