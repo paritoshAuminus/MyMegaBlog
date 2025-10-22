@@ -85,7 +85,7 @@ class Services {
     //--------------
     // UPDATE NOTE
     //--------------
-    async updateNote({ id, note }) {      // note: { title, content }
+    async updateNote(id, { title, content }) {      // note: { title, content }
         try {
             const response = await fetch(`${BASE_URL}/notes/${id}`, {
                 method: 'PUT',
@@ -93,7 +93,10 @@ class Services {
                     'Content-Type': 'application/json',
                     'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
                 },
-                body: JSON.stringify({ note: note })
+                body: JSON.stringify({
+                    title: title,
+                    content: content
+                })
             })
 
             const result = await response.json()

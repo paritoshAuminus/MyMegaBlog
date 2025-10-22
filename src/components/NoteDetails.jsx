@@ -20,14 +20,26 @@ const NoteDetails = () => {
         fetchNote()
     }, [])
 
+    const handleUpdate = async ({ title, content }) => {
+        const { response, result } = await services.updateNote(id, {
+            title: title,
+            content: content
+        })
+        if (response.ok) {
+            setNote(result)
+        } else {
+            console.log('updateNote :: failed to update ::', response.ok)
+        }
+        setEdit(false)
+    }
 
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
             <div className="w-full py-2 px-3 flex justify-between">
-                <Link 
-                to={'/notes'}
-                className="text-lg px-3 py-0.5 rounded-lg text-white bg-blue-500 hover:bg-blue-600 cursor-pointer"
+                <Link
+                    to={'/notes'}
+                    className="text-lg px-3 py-0.5 rounded-lg text-white bg-blue-500 hover:bg-blue-600 cursor-pointer"
                 >
                     Back
                 </Link>
@@ -43,16 +55,18 @@ const NoteDetails = () => {
                     noteTitle={note.title}
                     mode={"edit"}
                     id={id}
+                    onSave={handleUpdate}
                 />
-            :
-            <main className="w-full bg-white shadow-lg rounded-lg p-8 border border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                    {note.title}
-                </h2>
-                <p className="whitespace-pre-line text-gray-700 leading-relaxed">
-                    {note.content}
-                </p>
-            </main>
+                :
+                <main className="w-full bg-white shadow-lg rounded-lg p-8 border border-gray-200">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                        {note.title}
+                    </h2>
+                    <p className="whitespace-pre-line text-gray-700 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: note.content }}
+                    >
+                    </p>
+                </main>
             }
         </div>
     );

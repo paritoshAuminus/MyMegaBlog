@@ -33,8 +33,11 @@ function Notes() {
                 <span className='text-lg md:text-xl'>{noteList.length} notes stored</span>
                 <button onClick={() => setCreate(!create)} className='px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer'>{create ? 'Cancel' : '+ Add Note'}</button>
             </div>
+
+            {/* create new note */}
             {create && <AddNote />}
-            {/* <NoteDetails /> */}
+
+            {/* List all notes */}
             {noteList.length > 0 ?
                 <div className='px-10'>
                     <ul className='grid-cols-3 gap-3'>
