@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import authService from '../auth/auth'
+import {  useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Notes } from '../pages'
-import { AddNote } from '../components'
-import services from '../auth/config'
 import { CgNotes } from 'react-icons/cg'
 import { FaNoteSticky } from 'react-icons/fa6'
 
@@ -29,6 +24,7 @@ function Home() {
         </div>
       </div>
     </section>
+
   )
 }
 
