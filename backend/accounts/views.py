@@ -5,37 +5,18 @@ from .serializer import UserSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 
 # GET - Get one user
 @api_view(['GET'])
-def user(request, pk):
-    user = get_object_or_404(User, id=pk)
-    serializer = UserSerializer(user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-# POST - login
-@api_view(['POST'])
-def login(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    
-    if not email or not password:
-        return Response({'message': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        user_obj = User.objects.get(email=email)
-        user = authenticate(username=user_obj.username, password=password)
-    except User.DoesNotExist:
-        return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    if user is None:
-        return Response({'message: Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    serializer = UserSerializer(user)
+def user(request):
+    serializer = UserSerializer(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # POST - Register
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     username = request.data.get('username')
     email = request.data.get('email')
@@ -44,6 +25,12 @@ def register(request):
     if not username or not email or not password:
         return Response(
             {'message': 'Username, email and password are required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if User.objects.filter(username=username).exists():
+        return Response(
+            {'message': 'Username already exists.'},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -61,4 +48,3 @@ def register(request):
 
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    

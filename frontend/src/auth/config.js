@@ -11,7 +11,7 @@ class Services {
     // ----------------------------------
     async createNote({ title, content }) {
         try {
-            const response = await fetch(`${BASE_URL}/notes`, {
+            const response = await fetch(`${BASE_URL}/api/blogs/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,36 +38,32 @@ class Services {
     // --------------------------------------------------------------
     // FETCH ALL NOTES :: getNotes :: fetch a list of notes (objects)
     // --------------------------------------------------------------
-    async getNotes() {
+    async getBlogs() {
         try {
-            const response = await fetch(`${BASE_URL}/notes`, {
+            const response = await fetch(`${BASE_URL}api/blogs/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                    // 'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
                 }
             })
             const result = await response.json()
-            if (response.ok) {
-                return { response, result }
-            } else {
-                console.log('getNotes :: failed to fetch notes', response.status)
-            }
+            return {response, result} 
         } catch (error) {
-            console.log('services error :: getNotes ::', error)
+            console.log('services error :: getBlogs ::', error)
         }
     }
 
     //-----------------------------------------------------
     // FETCH ONE NOTE :: getNote :: fetch one note (object)
     //-----------------------------------------------------
-    async getNote({ id }) {
+    async getBlog({ id }) {
         try {
-            const response = await fetch(`${BASE_URL}/notes/${id}`, {
+            const response = await fetch(`${BASE_URL}api/blogs/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
+                    // 'x-user-id': Number(localStorage.getItem('megaNotesAccessToken'))
                 }
             })
             const result = await response.json()

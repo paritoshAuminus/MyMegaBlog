@@ -11,16 +11,17 @@ const NoteDetails = () => {
 
     const navigate = useNavigate()
 
-    // fetch single note
-    useEffect(() => {
-        const fetchNote = async () => {
-            const { response, result } = await services.getNote({ id: id })
-            if (response.ok) {
-                setNote(result)
-            }
-        }
-        fetchNote()
-    }, [])
+    // fetch single blog
+    const getBlog = async () => {
+    const { response, result } = await services.getBlog({ id: id })
+    if (response.ok) {
+        setNote(result)
+    }
+  }
+
+  useEffect(() => {
+    getBlog()
+  }, [id])
 
     // delete note
     const handleDelete = async () => {

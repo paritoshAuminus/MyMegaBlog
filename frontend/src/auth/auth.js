@@ -9,22 +9,26 @@ import { login as storeLogin, logout as storeLogout } from "../store/authSlice";
 class AuthService {
 
     // signup & login
-    async signup({ name, email, password }) {
+    async signup({ username, email, password }) {
         try {
-            const response = await fetch(`${BASE_URL}/auth/register`, {
+            const response = await fetch(`${BASE_URL}auth/register/`, {
                 method: 'POST',
-                body: JSON.stringify({ name, email, password }),
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ username, email, password }),
             })
 
+            const result = await response.json()
+            console.log(result)
+
             if (response.ok) {
-                const response = await this.login({ email, password })
-                return response
+                await this.login({ username, password })
             } else {
-                console.log(`Failed to signup :: ${response.status} :: ${response.statusText}`)
+                throw new Error(`authservice error :: ${result.message} || 'Signup failed'`)
             }
+
+            return { response, result }
         } catch (error) {
             console.log('authService error :: signup ::', error)
             throw error
@@ -32,11 +36,11 @@ class AuthService {
     }
 
     // login 
-    async login({ email, password }) {
+    async login({ username, password }) {
         try {
-            const response = await fetch(`${BASE_URL}/auth/login`, {
+            const response = await fetch(`${BASE_URL}auth/login/`, {
                 method: 'POST',
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ username, password }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -45,12 +49,17 @@ class AuthService {
             const result = await response.json()
 
             if (response.ok) {
-                localStorage.setItem('megaNotesAccessToken', result.token)
+                localStorage.setItem('megaNotesAccessToken', result.access)
+                localStorage.setItem('megaNotesRefreshToken', result.refresh)
+
+                // calling getUser for user information --> store/authslice
+                this.getUser()
+
             } else {
                 console.log('login :: failed to login')
-                return {response}
+                return response.message
             }
-            return {response, result}
+            return { response, result }
 
         } catch (error) {
             console.log('authService error :: login ::', error)
@@ -61,26 +70,30 @@ class AuthService {
     // get currently logged in user
     async getUser() {
         const token = localStorage.getItem('megaNotesAccessToken');
-        if (!token) return false;
+        if (!token) token = localStorage.getItem('megaNotesRefreshToken');
 
         try {
-            const response = await fetch(`${BASE_URL}/auth/getUser`, {
-                method: 'GET', // GET is enough
+            const response = await fetch(`${BASE_URL}/auth/user/`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // <-- send token in header
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) return false;
-            return response
+            const result = await response.json()
+            console.log(response)
+            if (!response.ok) return `$getUser error :: ${response.statusText}`;
+
+            console.log(result)
+
+            return { response, result }
 
         } catch (error) {
             console.error('authService error :: getUser ::', error);
             return false;
         }
     }
-
 
     // logout
     logout() {

@@ -22,7 +22,7 @@ function Notes() {
 
     useEffect(() => {
         const fetchNotes = async () => {
-            const { response, result } = await services.getNotes()
+            const { response, result } = await services.getBlogs()
             if (response.ok) {
                 setNoteList(result)
             } else {
@@ -30,17 +30,18 @@ function Notes() {
             }
         }
         fetchNotes()
-    }, [handleCreate, status])
+    }, [])
 
 
-    if (!status) return (
-        <div className='w-full flex flex-col justify-center items-center my-24'>
-            <div className='text-blue-500 font-semibold text-2xl'>Please signup to continue</div>
-        </div>
-    )
+    // if (!status) return (
+    //     <div className='w-full flex flex-col justify-center items-center my-24'>
+    //         <div className='text-blue-500 font-semibold text-2xl'>Please signup to continue</div>
+    //     </div>
+    // )
 
     return (
         <>
+            {status &&
             <div className='w-full flex justify-between px-15 py-2'>
                 <span className='text-lg md:text-xl'>{noteList.length} notes stored</span>
                 <button
@@ -50,6 +51,7 @@ function Notes() {
                     {create ? 'Cancel' : '+ Add Note'}
                 </button>
             </div>
+            }
 
             {/* create new note */}
             {create && <AddNote onSave={handleCreate} />}

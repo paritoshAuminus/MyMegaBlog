@@ -20,12 +20,14 @@ function Login() {
     } = useForm()
 
     const submit = async (data) => {
-        const response = await authService.login({
-            email: data.email,
+        const { response, result } = await authService.login({
+            username: data.username,
             password: data.password
         })
-        if (response.response.ok) {
-            dispatch(storeLogin(response.result.user))
+        console.log(response)
+        console.log(result)
+        if (response.ok) {
+            dispatch(storeLogin(result))
             navigate('/')
         } else if (response.response.status === 404 || !response.response.ok) {
             setError('User not found')
@@ -34,12 +36,12 @@ function Login() {
         }
     }
 
-    if (status) return (
-        <div className='w-full flex flex-col justify-center items-center my-12'>
-            <div className='text-blue-500 font-semibold text-2xl'>You are already Logged in!</div>
-            <Link to={'/'} className='text-blue-500 hover:text-blue-300 cursor-pointer'>Go back</Link>
-        </div>
-    )
+    // if (status) return (
+    //     <div className='w-full flex flex-col justify-center items-center my-12'>
+    //         <div className='text-blue-500 font-semibold text-2xl'>You are already Logged in!</div>
+    //         <Link to={'/'} className='text-blue-500 hover:text-blue-300 cursor-pointer'>Go back</Link>
+    //     </div>
+    // )
 
     return (
         <div className='min-h-screen flex flex-col gap-3 items-center justify-center bg-gray-100 px-4'>
@@ -50,15 +52,11 @@ function Login() {
                 </div>
                 <div className='space-y-4'>
                     <Input
-                        label={'Email'}
-                        type={'email'}
-                        placeholder={'Enter your email'}
-                        {...register('email', {
+                        label={'Username'}
+                        type={'text'}
+                        placeholder={'Enter your username'}
+                        {...register('username', {
                             required: true,
-                            pattern: {
-                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                message: 'Please enter a valid email'
-                            }
                         })}
                     />
                 </div>
