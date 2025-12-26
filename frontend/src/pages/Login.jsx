@@ -5,6 +5,7 @@ import { login as storeLogin } from './../store/authSlice'
 import authService from '../auth/auth'
 import { Button, Input } from '../components'
 import { useNavigate, Link } from 'react-router-dom'
+import services from '../auth/config'
 
 function Login() {
 
@@ -20,28 +21,61 @@ function Login() {
     } = useForm()
 
     const submit = async (data) => {
-        const { response, result } = await authService.login({
+    try {
+        setError('');
+
+        const loginRes = await authService.login({
             username: data.username,
             password: data.password
-        })
-        console.log(response)
-        console.log(result)
-        if (response.ok) {
-            dispatch(storeLogin(result))
-            navigate('/')
-        } else if (response.response.status === 404 || !response.response.ok) {
-            setError('User not found')
-        } else {
-            throw new Error(result.message || `Login failed ${response.status}`)
-        }
-    }
+        });
 
-    // if (status) return (
-    //     <div className='w-full flex flex-col justify-center items-center my-12'>
-    //         <div className='text-blue-500 font-semibold text-2xl'>You are already Logged in!</div>
-    //         <Link to={'/'} className='text-blue-500 hover:text-blue-300 cursor-pointer'>Go back</Link>
-    //     </div>
-    // )
+        if (!loginRes) {
+            throw new Error('No response from server');
+        }
+
+        const { response, result } = loginRes;
+
+        if (response.ok) {
+            const userRes = await authService.getUser();
+
+            if (!userRes?.response?.ok) {
+                throw new Error('Failed to fetch user');
+            }
+
+            dispatch(storeLogin(userRes.result));
+            navigate('/');
+            return;
+        }
+
+        // 🔥 IMPORTANT: order matters
+        if (response.status === 401) {
+            setError('Incorrect username or password.');
+        } else if (response.status === 404) {
+            setError('User not found.');
+        } else {
+            setError('Something went wrong, please try again.');
+        }
+
+    } catch (err) {
+        console.error('Login error:', err);
+        setError(err.message || 'Unexpected error occurred');
+    }
+};
+
+
+    if (status) return (
+        <div className='w-full flex flex-col justify-center items-center my-12'>
+            <div className='text-blue-500 font-semibold text-2xl'>You are already Logged in!</div>
+            <Link to={'/'} className='text-blue-500 hover:text-blue-300 cursor-pointer'>Go back</Link>
+        </div>
+    )
+
+    if (error) return (
+        <div className='w-full flex flex-col justify-center items-center my-12'>
+            <div className='text-red-500 font-semibold text-2xl'>{error}</div>
+            <Link to={'/'} className='text-blue-500 hover:text-blue-300 cursor-pointer'>Go back</Link>
+        </div>
+    )
 
     return (
         <div className='min-h-screen flex flex-col gap-3 items-center justify-center bg-gray-100 px-4'>

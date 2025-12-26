@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import authService from "../auth/auth";
+import { Button } from "../components";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout as storeLogout } from "../store/authSlice";
+import { FaUserCircle } from "react-icons/fa";
+import authService from '../auth/auth'
+
 
 /**
  * MyAccount Component
@@ -17,51 +24,58 @@ function MyAccount() {
     const [loading, setLoading] = useState(true)
     const [edit, setEdit] = useState(false)
 
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const fetchUser = async () => {
         try {
             setLoading(true);
-            const res = await authService.getUser();
-            if (!res.ok) throw new Error("Failed to fetch user info");
-            const data = await res.json();
-            setUser(data.user);
+
+            const data = await authService.getUser();
+
+            if (!data) {
+                throw new Error("No token found");
+            }
+
+            const { response, result } = data;
+
+            if (!response.ok) {
+                throw new Error(result?.message || "Failed to fetch user info");
+            }
+
+            setUser(result);
+
         } catch (err) {
+            console.error(err);
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
 
+
     useEffect(() => {
         fetchUser()
     }, [])
 
-    // EXAMPLE REQUEST
-    // PUT http://localhost:8080/auth/update
-    // Authorization: Bearer 1729580281914
-    // Content - Type: application / json
-
-    // {
-    //      "name": "Updated Name",
-    //      "email": "newemail@example.com",
-    //      "password": "newpassword123"
-    // }
-
-    // EXAMPLE RESPONSE
-    // {
-    //  "message": "User updated successfully",
-    //  "user": {
-    //      "id": 1729580281914,
-    //      "name": "Updated Name",
-    //      "email": "newemail@example.com"
-    //  }
-    // }
-
-
+    const handleLogout = () => {
+        authService.logout()
+        dispatch(storeLogout())
+        navigate('/login')
+    }
 
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
                 Loading account info...
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="flex justify-center items-center h-screen text-gray-400 text-lg">
+                <p>No user info available. Consider <Link to="/signup" className="text-blue-400 cursor-pointer font-semibold">Singning up.</Link></p>
             </div>
         );
     }
@@ -74,65 +88,67 @@ function MyAccount() {
         );
     }
 
-    if (!user) {
-        return (
-            <div className="flex justify-center items-center h-screen text-gray-400 text-lg">
-                No user info available. Consider Singning up.
-            </div>
-        );
-    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
+        <>
+            <section className="body-font text-gray-600">
+                <div className="container mx-auto px-5 py-24 flex justify-center">
+                    <div className="w-full max-w-xl bg-white shadow-lg rounded-xl p-8">
 
-            {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-6 py-12">
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                    <h2 className="text-2xl font-semibold mb-8 border-b pb-3">
-                        Account Details
-                    </h2>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                                Username
-                            </p>
-                            <p className="text-lg font-medium text-gray-900">
-                                {user?.name || "—"}
+                        {/* Header */}
+                        <div className="flex flex-col items-center mb-8">
+                            <FaUserCircle className="text-6xl text-blue-600 mb-3" />
+                            <h1 className="text-2xl font-semibold text-gray-900">
+                                My Account
+                            </h1>
+                            <p className="text-sm text-gray-500">
+                                Manage your profile and session
                             </p>
                         </div>
 
-                        <div>
-                            <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                                Email
-                            </p>
-                            <p className="text-lg font-medium text-gray-900">
-                                {user?.email || "—"}
-                            </p>
+                        {/* User Info */}
+                        <div className="space-y-4 mb-8">
+                            <div className="flex justify-between border-b pb-2">
+                                <span className="font-medium text-gray-700">Name</span>
+                                <span className="text-gray-900">{user?.username || '—'}</span>
+                            </div>
+
+                            <div className="flex justify-between border-b pb-2">
+                                <span className="font-medium text-gray-700">Email</span>
+                                <span className="text-gray-900">{user?.email || '—'}</span>
+                            </div>
+
+                            <div className="flex justify-between border-b pb-2">
+                                <span className="font-medium text-gray-700">Account Status</span>
+                                <span className="text-green-600 font-medium">Active</span>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Divider */}
-                    <div className="border-t my-10"></div>
+                        {/* Actions */}
+                        <div className="flex justify-between gap-4">
+                            <button
+                                className="flex-1 border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-50 transition"
+                                disabled
+                            >
+                                Edit Profile
+                            </button>
 
-                    {/* Extra Section (Optional) */}
-                    <div>
-                        <h3 className="text-xl font-semibold mb-4">About me</h3>
-                        <p className="text-gray-600 mb-2">
-                            Add more to your profile about yourself, your ideas and innovations.
-                        </p>
-                        <button onClick={() => (setEdit(!edit))} className="px-5 py-2 mt-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition cursor-not-allowed">
-                            Edit Profile
-                        </button>
+                            <button
+                                onClick={handleLogout}
+                                className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+                            >
+                                Logout
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </main>
+            </section>
 
             {/* Footer */}
-            <footer className="mt-16 text-center text-gray-500 text-sm pb-8">
-                © {new Date().getFullYear()} YourApp. All rights reserved.
-            </footer>
-        </div>
+            < footer className="mt-16 text-center text-gray-500 text-sm pb-8" >
+                © {new Date().getFullYear()} YourApp.All rights reserved.
+            </footer >
+        </>
     );
 }
 
