@@ -43,11 +43,12 @@ function Login() {
             }
 
             dispatch(storeLogin(userRes.result));
+            console.log(userRes.result);
             navigate('/');
             return;
         }
 
-        // 🔥 IMPORTANT: order matters
+        // IMPORTANT: order matters
         if (response.status === 401) {
             setError('Incorrect username or password.');
         } else if (response.status === 404) {

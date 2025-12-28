@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import services from "../auth/config";
 import AddNote from './AddNote';
+import { useSelector } from "react-redux";
 
 const NoteDetails = () => {
 
@@ -9,6 +10,7 @@ const NoteDetails = () => {
     const [note, setNote] = useState({})
     const [edit, setEdit] = useState(false)
 
+    const status = useSelector((state) => state.auth.status)
     const navigate = useNavigate()
 
     // fetch single blog
@@ -48,6 +50,7 @@ const NoteDetails = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
+            {status &&
             <div className="w-full py-2 px-3 flex justify-between">
                     <Link
                         to={'/notes'}
@@ -67,7 +70,7 @@ const NoteDetails = () => {
                             Edit
                         </button>
                     </div>
-            </div>
+            </div>}
             {edit ?
                 <AddNote
                     initialValue={note.content}

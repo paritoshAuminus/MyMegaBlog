@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import BASE_URL from "../api/api";
 import { login as storeLogin, logout as storeLogout } from "../store/authSlice";
 
@@ -5,7 +6,6 @@ import { login as storeLogin, logout as storeLogout } from "../store/authSlice";
 // ---------------------------------------------------
 // AUTHENTICATION SERVICES
 // ---------------------------------------------------
-
 class AuthService {
 
     // signup & login
@@ -51,13 +51,11 @@ class AuthService {
                 localStorage.setItem('megaNotesAccessToken', result.access)
                 localStorage.setItem('megaNotesRefreshToken', result.refresh)
 
-                // calling getUser for user information --> store/authslice
-                this.getUser()
+                await this.getUser()
+                return { response, result }
             } else {
-                console.log('login :: failed to login')
-                return response.message
+                throw new Error(`authservice error :: ${result.message} || 'Login failed'`)
             }
-            return { response, result }
 
         } catch (error) {
             console.log('authService error :: login ::', error)
@@ -67,51 +65,83 @@ class AuthService {
 
     // get currently logged in user
     async getUser() {
-        const token = localStorage.getItem('megaNotesAccessToken');
-        if (!token) {
-            await this.getToken()
+        let accessToken = localStorage.getItem('megaNotesAccessToken')
+        console.log(accessToken)
+        // No access token → try refresh
+        if (!accessToken) {
+            accessToken = await this.getToken();
+            if (!accessToken) return null;
         }
-        if (!token) return null;
 
         try {
-            const response = await fetch(`${BASE_URL}/auth/user/`, {
+            let response = await fetch(`${BASE_URL}/auth/user/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${accessToken}`,
+                },
             });
+
+            // Access token expired → refresh & retry once
+            if (response.status === 401) {
+                accessToken = await this.getToken();
+                if (!accessToken) return null;
+
+                response = await fetch(`${BASE_URL}/auth/user/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user');
+            }
 
             const result = await response.json();
             return { response, result };
 
         } catch (error) {
             console.error('authService error :: getUser ::', error);
-            throw error;
+            return null;
         }
     }
 
+
     // get new access token
     async getToken() {
-        const token = localStorage.getItem('megaNotesRefreshToken');
+        const refreshToken = localStorage.getItem('megaNotesRefreshToken');
+        if (!refreshToken) return null;
 
-        if (!token) return null;
         try {
             const response = await fetch(`${BASE_URL}/auth/refresh/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ refresh: token })
+                body: JSON.stringify({ refresh: refreshToken }),
             });
+
+            if (!response.ok) {
+                throw new Error('Refresh token expired');
+            }
+
             const result = await response.json();
-            localStorage.setItem('megaNotesAccessToken', result.access)
-            return { response, result };
+            console.log(response)
+            console.log(result)
+            localStorage.setItem('megaNotesAccessToken', result.access);
+            return result.access;
+
         } catch (error) {
             console.error('authService error :: getToken ::', error);
-            throw error;
+            localStorage.removeItem('megaNotesAccessToken');
+            localStorage.removeItem('megaNotesRefreshToken');
+            return null;
         }
     }
+
 
     // logout
     logout() {

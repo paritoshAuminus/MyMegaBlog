@@ -22,7 +22,21 @@ def blog(request, pk):
     blog = get_object_or_404(Blog, id=pk)
     serializer = BlogSerializer(blog)
     return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+# GET - get blogs for one author
+@api_view(['GET'])
+def myblogs(request):
+    blogs = Blog.objects.filter(author=request.user)
+    serializer = BlogSerializer(blogs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# GET - get one user's one blog
+@api_view(['GET'])
+def myblog(request, pk):
+    blog = Blog.objects.get(id=pk, author=request.user)
+    serializer = BlogSerializer(blog)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 # POST - Create/add a blog (authorised user)
 @api_view(['POST'])
 def add_blog(request):

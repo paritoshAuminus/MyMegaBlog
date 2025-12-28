@@ -48,7 +48,7 @@ class Services {
                 }
             })
             const result = await response.json()
-            return {response, result} 
+            return { response, result }
         } catch (error) {
             console.log('services error :: getBlogs ::', error)
         }
@@ -74,6 +74,45 @@ class Services {
             }
         } catch (error) {
             console.log('services error :: getNote ::', error)
+        }
+    }
+
+    // ----------------------------------------------------------------
+    //  FETCH BLOGS :: FETCH ALL BLOGS BELONGING TO THE REQUESTING USER
+    // ----------------------------------------------------------------
+    async getUserBlogs() {
+        try {
+            const response = await fetch(`${BASE_URL}api/blogs/myblogs`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('megaNotesAccessToken')}`
+                }
+            })
+            const result = await response.json()
+            return { response, result }
+        } catch (error) {
+            console.log('services error :: getUserBlogs ::', error)
+        }
+    }
+
+    //---------------------------------------------------------------- 
+    // FETCH BLOG :: FETCH ONE BLOG BELONGING TO THE REQUESTING USER
+    //---------------------------------------------------------------- 
+    async getUserBlog({ id }) {
+        try {
+            const response = await fetch(`${BASE_URL}api/blogs/myblogs/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-id': localStorage.getItem('megaNotesAccessToken')
+                }
+            })
+            const result = await response.json()
+            console.log('AccessToken', localStorage.getItem('megaNotesAccessToken'))
+            return { response, result }
+        } catch {
+            console.log('services error :: getUserBlog ::', error)
         }
     }
 
